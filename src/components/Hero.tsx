@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowDown, Download, Github, Linkedin, Mail, Play, Code, Instagram, Phone } from 'lucide-react';
+import { ArrowDown, Download, Github, Linkedin, Mail, Play, Code, Instagram, Phone, Volume2, VolumeX } from 'lucide-react';
 import { PERSONAL } from '../data/personal';
 import { useScrollTo } from '../hooks/useNavigation';
 import Modal from './Modal';
 import VideoPlayer from './VideoPlayer';
+import { useAppStore } from '../store';
 
 // Custom X (formerly Twitter) icon component
 function XIcon({ size = 18 }: { size?: number }) {
@@ -31,10 +32,71 @@ interface HeroProps {
 
 export default function Hero({ viewMode }: HeroProps) {
   const scrollTo = useScrollTo();
+  const setIsHeroVisibleStore = useAppStore(state => state.setIsHeroVisible);
   const [videoOpen, setVideoOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isHeroVisible, setIsHeroVisible] = useState(true);
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<SVGSVGElement>(null);
   const orbRef = useRef<HTMLDivElement>(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      const nextMuted = !videoRef.current.muted;
+      videoRef.current.muted = nextMuted;
+      setIsMuted(nextMuted);
+    }
+  };
+
+  // Handle Intersection Observer for Hero Visibility
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setIsHeroVisible(entry.isIntersecting);
+        setIsHeroVisibleStore(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          useAppStore.getState().setActiveSection('home');
+        }
+      },
+      { threshold: 0.5 } // 50% visibility threshold
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  // Handle Video Playback and Audio based on visibility
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (isHeroVisible) {
+      video.muted = false;
+      const playPromise = video.play();
+
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          setIsMuted(false);
+        }).catch(() => {
+          // Browser blocked autoplay with sound. Fall back to muted autoplay.
+          video.muted = true;
+          setIsMuted(true);
+          video.play().catch(() => {});
+        });
+      }
+    } else {
+      // Pause video and mute when leaving Hero section
+      video.pause();
+      video.muted = true;
+      setIsMuted(true);
+    }
+  }, [isHeroVisible]);
 
   // 3D Parallax Tilt Effect using direct DOM updates for performance
   useEffect(() => {
@@ -101,19 +163,56 @@ export default function Hero({ viewMode }: HeroProps) {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center pt-24 md:pt-16 pb-12 overflow-hidden">
+    <section ref={sectionRef} id="home" className="relative min-h-screen flex items-center pt-24 md:pt-16 pb-12 overflow-hidden">
       
-      {/* Layer 1: Deep-space dark background with gradients */}
-      <div className="absolute inset-0 bg-dark-900 pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent pointer-events-none z-0" />
+      {/* Layer 1: Background Video (Cinematic AI Environment) */}
+      <div className="absolute inset-0 z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted={isMuted}
+          playsInline
+          className="w-full h-full object-cover opacity-80 mix-blend-screen"
+          poster="/assets/images/GopiChand_Profile_Photo_HD.png.png"
+        >
+          <source src="/assets/videos/GopiChand_AI_Hero_Intro.mp4.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      {/* Layer 2: Color Grading & Blend Modes */}
+      <div className="absolute inset-0 bg-dark-900/40 mix-blend-multiply pointer-events-none z-0" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-900/30 via-accent/20 to-violet-900/30 mix-blend-overlay pointer-events-none z-0" />
       
-      {/* Layer 2: Subtle animated grid overlay */}
-      <div className="grid-bg opacity-30 pointer-events-none z-0" />
+      {/* Soft gradient transition at the bottom to Projects section */}
+      <div className="absolute bottom-0 left-0 w-full h-48 bg-gradient-to-t from-dark-900 to-transparent pointer-events-none z-0" />
+
+      {/* Layer 3: Subtle animated grid overlay */}
+      <div className="grid-bg opacity-20 pointer-events-none z-0 mix-blend-overlay" />
       
-      {/* Layer 4: Volumetric lighting orbs */}
+      {/* Layer 4: Volumetric lighting orbs for mouse-reactive ambient light */}
       <div ref={orbRef} className="absolute inset-0 pointer-events-none z-0 transition-transform duration-300 ease-out">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent/10 rounded-full blur-[130px] orb-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan/10 rounded-full blur-[130px] orb-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan/20 rounded-full blur-[120px] orb-pulse mix-blend-screen" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[120px] orb-pulse mix-blend-screen" style={{ animationDelay: '2s' }} />
+      </div>
+
+      {/* Audio Control (Layer 5) */}
+      <div className="absolute top-28 right-6 md:right-12 z-50">
+        <button
+          onClick={toggleMute}
+          className="group flex items-center gap-2.5 px-3 py-2 glass-card border border-white/10 hover:border-accent/40 rounded-full transition-all duration-300 shadow-lg shadow-black/20 hover:shadow-accent/20 cursor-pointer overflow-hidden backdrop-blur-md bg-dark-900/40"
+          aria-label={isMuted ? 'Enable introduction video sound' : 'Mute introduction video'}
+          aria-pressed={!isMuted}
+          data-cursor="CONNECT"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/10 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease-in-out_infinite]" />
+          <div className="relative z-10 w-7 h-7 flex items-center justify-center bg-white/5 group-hover:bg-accent/20 rounded-full transition-colors text-slate-300 group-hover:text-white">
+            {isMuted ? <VolumeX size={12} /> : <Volume2 size={12} className="text-cyan-400" />}
+          </div>
+          <span className="relative z-10 text-[10px] font-bold uppercase tracking-widest text-slate-300 group-hover:text-white font-mono pr-2">
+            Sound {isMuted ? 'Off' : 'On'}
+          </span>
+        </button>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
@@ -124,8 +223,13 @@ export default function Hero({ viewMode }: HeroProps) {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="lg:col-span-7 flex flex-col justify-center text-left"
+            className="lg:col-span-7 flex flex-col justify-center text-left relative z-10"
           >
+            {/* Localized gradient for text readability over video */}
+            <div 
+              className="absolute -inset-12 -z-10 pointer-events-none opacity-80"
+              style={{ background: 'radial-gradient(circle at center, rgba(10,15,25,0.85) 0%, rgba(10,15,25,0.4) 50%, transparent 100%)' }}
+            />
             {/* Layer 7: Foreground Typography & Badges */}
             <motion.div variants={itemVariants} className="w-fit">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 mb-6 rounded-full border border-accent/20 bg-accent/5 text-[10px] font-bold uppercase tracking-wider text-accent-light shadow-md shadow-accent/5">
@@ -168,36 +272,40 @@ export default function Hero({ viewMode }: HeroProps) {
                     href={PERSONAL.resume}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 cursor-pointer text-xs uppercase tracking-wider"
+                    className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-accent/20 hover:shadow-accent/40 hover:-translate-y-0.5 cursor-pointer text-xs uppercase tracking-wider overflow-hidden"
                     data-cursor="OPEN"
                   >
-                    <Download size={14} />
-                    Download Resume
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease-in-out_infinite]" />
+                    <Download size={14} className="relative z-10" />
+                    <span className="relative z-10">Download Resume</span>
                   </a>
                   <button
                     onClick={() => scrollTo('contact')}
-                    className="inline-flex items-center gap-2 px-6 py-3.5 border border-white/10 hover:border-accent/40 text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 text-xs uppercase tracking-wider cursor-pointer"
+                    className="group relative inline-flex items-center gap-2 px-6 py-3.5 border border-white/10 hover:border-accent/40 text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 text-xs uppercase tracking-wider cursor-pointer overflow-hidden backdrop-blur-sm bg-dark-900/30"
                     data-cursor="CONNECT"
                   >
-                    Let's Connect
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/10 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease-in-out_infinite]" />
+                    <span className="relative z-10">Let's Connect</span>
                   </button>
                 </>
               ) : (
                 <>
                   <button
                     onClick={() => scrollTo('projects')}
-                    className="px-6 py-3.5 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:-translate-y-0.5 cursor-pointer text-xs uppercase tracking-wider"
+                    className="group relative px-6 py-3.5 bg-accent hover:bg-accent-light text-white font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-accent/25 hover:shadow-accent/40 hover:-translate-y-0.5 cursor-pointer text-xs uppercase tracking-wider overflow-hidden"
                     data-cursor="VIEW"
                   >
-                    Explore Architectures
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease-in-out_infinite]" />
+                    <span className="relative z-10">Explore Architectures</span>
                   </button>
                   <button
                     onClick={() => scrollTo('engineering-lab')}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 border border-white/10 hover:border-accent/40 text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 text-xs uppercase tracking-wider cursor-pointer"
+                    className="group relative inline-flex items-center gap-2.5 px-6 py-3.5 border border-white/10 hover:border-accent/40 text-white font-semibold rounded-xl transition-all duration-300 hover:bg-white/5 hover:-translate-y-0.5 text-xs uppercase tracking-wider cursor-pointer overflow-hidden backdrop-blur-sm bg-dark-900/30"
                     data-cursor="VIEW"
                   >
-                    <Code size={14} />
-                    Engineering Lab
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-accent/10 to-transparent -translate-x-full group-hover:animate-[sweep_1.5s_ease-in-out_infinite]" />
+                    <Code size={14} className="relative z-10" />
+                    <span className="relative z-10">Engineering Lab</span>
                   </button>
                 </>
               )}

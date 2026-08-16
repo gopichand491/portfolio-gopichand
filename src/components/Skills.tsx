@@ -4,7 +4,7 @@ import { Code2, Brain, Cpu, Globe, BarChart3, Wrench, Network, LayoutGrid } from
 import SectionWrapper from './SectionWrapper';
 import { SKILLS } from '../data/skills';
 
-const iconMap: Record<string, React.ElementType> = {
+const iconMap: Record<string, any> = {
   Code2,
   Brain,
   Cpu,

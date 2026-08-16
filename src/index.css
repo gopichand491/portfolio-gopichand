@@ -537,3 +537,10 @@
   color: #e2e8f0;
 }
 
+/* Sweep Animation for Button Micro-interactions */
+@keyframes sweep {
+  0% { transform: translateX(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+

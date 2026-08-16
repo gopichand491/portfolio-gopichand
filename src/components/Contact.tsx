@@ -27,7 +27,7 @@ interface CardData {
   label: string;
   value: string;
   href: string;
-  icon: React.ElementType;
+  icon: any;
 }
 
 function ContactCard({ card }: { card: CardData }) {
