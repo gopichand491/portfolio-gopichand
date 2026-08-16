@@ -1,16 +1,37 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, FileText } from 'lucide-react';
+import { Menu, X, FileText, UserCheck, Code } from 'lucide-react';
 import { NAV_ITEMS, PERSONAL } from '../data/personal';
 import { useActiveSection, useScrollTo, useScrolled } from '../hooks/useNavigation';
 
-export default function Navbar() {
-  const sectionIds = NAV_ITEMS.map((n) => n.id);
-  const active = useActiveSection(sectionIds);
-  const scrollTo = useScrollTo();
+interface NavbarProps {
+  viewMode: 'recruiter' | 'developer';
+  setViewMode: (mode: 'recruiter' | 'developer') => void;
+}
+
+export default function Navbar({ viewMode, setViewMode }: NavbarProps) {
   const scrolled = useScrolled();
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const scrollTo = useScrollTo();
+
+  // Dynamically filter nav items based on the active view mode
+  const filteredNavItems = NAV_ITEMS.filter((item) => {
+    if (viewMode === 'recruiter') {
+      return item.id !== 'engineering-lab';
+    } else {
+      // developer view mode
+      return (
+        item.id !== 'about' &&
+        item.id !== 'experience' &&
+        item.id !== 'achievements' &&
+        item.id !== 'certificates'
+      );
+    }
+  });
+
+  const sectionIds = filteredNavItems.map((n) => n.id);
+  const active = useActiveSection(sectionIds);
 
   // Close mobile menu on resize
   useEffect(() => {
@@ -72,31 +93,33 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 no-print ${
           scrolled
-            ? 'bg-dark-900/80 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/20'
-            : 'bg-transparent'
+            ? 'bg-dark-900/85 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/30 py-2'
+            : 'bg-transparent py-4'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             
-            {/* Logo */}
+            {/* Monogram Brand Signature Logo */}
             <button
               onClick={() => handleNav('home')}
-              className="text-lg font-black tracking-widest gradient-text hover:opacity-85 transition-opacity cursor-pointer font-mono"
+              className="group relative flex items-center justify-center w-10 h-10 rounded-xl border border-white/10 hover:border-accent/30 bg-dark-800/80 transition-all cursor-pointer font-mono text-base font-black tracking-widest text-white shadow-md shadow-black/20"
               aria-label="Back to top"
+              data-cursor="HOME"
             >
-              GC
+              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-accent-light to-cyan-light font-black group-hover:scale-105 transition-transform">GCG</span>
+              <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
             </button>
 
             {/* Desktop Navbar List */}
-            <nav className="hidden lg:flex items-center gap-1" aria-label="Main Navigation">
-              {NAV_ITEMS.map((item) => {
+            <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
+              {filteredNavItems.map((item) => {
                 const isActive = active === item.id;
                 return (
                   <button
                     key={item.id}
                     onClick={() => handleNav(item.id)}
-                    className={`relative px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors cursor-pointer ${
+                    className={`relative px-3.5 py-2 text-[11px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
                       isActive ? 'text-white' : 'text-slate-400 hover:text-slate-200'
                     }`}
                   >
@@ -104,7 +127,7 @@ export default function Navbar() {
                     {isActive && (
                       <motion.div
                         layoutId="activeNav"
-                        className="absolute inset-0 bg-white/5 rounded-lg border border-accent/20"
+                        className="absolute inset-0 bg-accent/10 rounded-lg border border-accent/20"
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
                     )}
@@ -113,17 +136,45 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Resume button & Mobile Toggle */}
-            <div className="flex items-center gap-3">
+            {/* View Mode Toggle & Resume Button */}
+            <div className="flex items-center gap-4">
+              
+              {/* Recruiter / Developer View Toggle Switch */}
+              <div className="hidden sm:inline-flex toggle-switch-container shadow-md shadow-black/25">
+                <button
+                  onClick={() => setViewMode('recruiter')}
+                  className={`toggle-switch-btn flex items-center gap-1.5 ${
+                    viewMode === 'recruiter' ? 'active' : 'inactive'
+                  }`}
+                  aria-label="Switch to Recruiter View"
+                >
+                  <UserCheck size={11} />
+                  Recruiter
+                </button>
+                <button
+                  onClick={() => setViewMode('developer')}
+                  className={`toggle-switch-btn flex items-center gap-1.5 ${
+                    viewMode === 'developer' ? 'active' : 'inactive'
+                  }`}
+                  aria-label="Switch to Developer View"
+                >
+                  <Code size={11} />
+                  Developer
+                </button>
+              </div>
+
+              {/* Resume button & Mobile Toggle */}
               <a
                 href={PERSONAL.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-accent/15 hover:bg-accent/25 border border-accent/25 rounded-xl transition-all shadow-sm shadow-accent/5"
+                className="hidden md:inline-flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white bg-accent/15 hover:bg-accent/25 border border-accent/25 rounded-xl transition-all shadow-sm shadow-accent/5"
+                data-cursor="OPEN"
               >
                 <FileText size={13} />
                 Resume ↗
               </a>
+
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
                 className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 transition-all cursor-pointer"
@@ -143,7 +194,7 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="fixed inset-0 z-40 lg:hidden">
             <div
-              className="absolute inset-0 bg-black/75 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
             />
             
@@ -158,23 +209,52 @@ export default function Navbar() {
               aria-modal="true"
               aria-label="Mobile Navigation Menu"
             >
-              <div className="flex flex-col gap-1.5">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = active === item.id;
-                  return (
+              <div className="space-y-6">
+                
+                {/* View Mode Toggle for Mobile */}
+                <div className="flex flex-col gap-2">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-1">Perspective Mode</span>
+                  <div className="flex w-full toggle-switch-container">
                     <button
-                      key={item.id}
-                      onClick={() => handleNav(item.id)}
-                      className={`text-left px-4 py-3 text-sm font-semibold rounded-xl transition-all cursor-pointer ${
-                        isActive
-                          ? 'text-white bg-accent/10 border border-accent/20'
-                          : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      onClick={() => setViewMode('recruiter')}
+                      className={`flex-1 text-center justify-center toggle-switch-btn flex items-center gap-1.5 ${
+                        viewMode === 'recruiter' ? 'active' : 'inactive'
                       }`}
                     >
-                      {item.label}
+                      <UserCheck size={11} />
+                      Recruiter
                     </button>
-                  );
-                })}
+                    <button
+                      onClick={() => setViewMode('developer')}
+                      className={`flex-1 text-center justify-center toggle-switch-btn flex items-center gap-1.5 ${
+                        viewMode === 'developer' ? 'active' : 'inactive'
+                      }`}
+                    >
+                      <Code size={11} />
+                      Developer
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block mb-2">Navigation</span>
+                  {filteredNavItems.map((item) => {
+                    const isActive = active === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNav(item.id)}
+                        className={`text-left w-full px-4 py-3 text-sm font-semibold rounded-xl transition-all cursor-pointer ${
+                          isActive
+                            ? 'text-white bg-accent/10 border border-accent/20'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="border-t border-white/5 pt-6 mt-6">

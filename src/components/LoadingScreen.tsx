@@ -1,9 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
+const KEYWORDS = ['AI', 'DATA', 'SYSTEMS', 'ENGINEERING'];
+
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [show, setShow] = useState(true);
   const [progress, setProgress] = useState(0);
+  const [activeKeywordIndex, setActiveKeywordIndex] = useState(0);
 
   useEffect(() => {
     // Increment progress indicator for premium feel
@@ -13,20 +16,34 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
           clearInterval(interval);
           return 100;
         }
-        return prev + Math.floor(Math.random() * 15) + 5;
+        const nextProgress = prev + Math.floor(Math.random() * 15) + 8;
+        return nextProgress >= 100 ? 100 : nextProgress;
       });
-    }, 100);
+    }, 80);
 
     const timer = setTimeout(() => {
       setShow(false);
-      setTimeout(onComplete, 400);
-    }, 1500);
+      setTimeout(onComplete, 450);
+    }, 1600);
 
     return () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
   }, [onComplete]);
+
+  // Map progress values to current technical keywords
+  useEffect(() => {
+    if (progress < 25) {
+      setActiveKeywordIndex(0);
+    } else if (progress < 50) {
+      setActiveKeywordIndex(1);
+    } else if (progress < 75) {
+      setActiveKeywordIndex(2);
+    } else {
+      setActiveKeywordIndex(3);
+    }
+  }, [progress]);
 
   return (
     <AnimatePresence>
@@ -36,16 +53,16 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
         >
-          <div className="absolute inset-0 bg-grid-bg opacity-40 pointer-events-none" />
+          <div className="absolute inset-0 bg-grid-bg opacity-20 pointer-events-none" />
           
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
             className="flex flex-col items-center gap-6 z-10"
           >
             {/* Spinning/pulsing circuit visual */}
-            <div className="relative flex items-center justify-center w-20 h-20">
+            <div className="relative flex items-center justify-center w-24 h-24">
               <motion.div
                 className="absolute inset-0 rounded-full border border-accent/20"
                 animate={{ rotate: 360 }}
@@ -61,24 +78,40 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
                 animate={{ rotate: 180 }}
                 transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
               />
-              <span className="text-xl font-black tracking-widest gradient-text select-none font-mono">GC</span>
+              <span className="text-xl font-black tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-accent-light to-cyan-light select-none font-mono">GC</span>
             </div>
 
-            <div className="text-center space-y-2.5">
-              <p className="text-xs text-slate-400 loading-pulse font-mono tracking-wider">
-                INITIALIZING GOPI CHAND'S AI PORTFOLIO...
-              </p>
+            <div className="text-center space-y-4">
+              <div className="space-y-1">
+                <p className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">
+                  Initializing Portfolio
+                </p>
+                <div className="h-6 overflow-hidden flex justify-center items-center">
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={KEYWORDS[activeKeywordIndex]}
+                      initial={{ y: 15, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -15, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-sm font-black tracking-widest text-white font-mono uppercase"
+                    >
+                      {KEYWORDS[activeKeywordIndex]}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
+              </div>
               
               {/* Progress bar */}
-              <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden mx-auto border border-white/5">
+              <div className="w-56 h-1.5 bg-white/5 rounded-full overflow-hidden mx-auto border border-white/5 relative">
                 <motion.div
                   className="h-full bg-gradient-to-r from-accent to-cyan rounded-full"
-                  style={{ width: `${Math.min(progress, 100)}%` }}
+                  style={{ width: `${progress}%` }}
                 />
               </div>
               
-              <p className="text-[10px] text-slate-600 font-mono">
-                System status: ACTIVE ({Math.min(progress, 100)}%)
+              <p className="text-[9px] text-slate-600 font-mono">
+                CORE STATUS: ACTIVE ({progress}%)
               </p>
             </div>
           </motion.div>

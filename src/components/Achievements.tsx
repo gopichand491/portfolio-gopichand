@@ -35,14 +35,40 @@ export default function Achievements() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="glass-card p-6 md:p-8 border-amber-500/20 hover:border-amber-500/40 relative group overflow-hidden glow-gold"
+            className="glass-card p-6 md:p-8 border-amber-500/20 hover:border-amber-500/40 relative group overflow-hidden glow-gold cursor-pointer"
+            data-cursor="OPEN"
           >
-            {/* Glowing gold background streak */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
+            {/* Volumetric Gold lighting */}
+            <div className="absolute -top-10 -right-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none z-0" />
+            
+            {/* Layered Floating golden micro-particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 bg-amber-400/40 rounded-full"
+                  style={{
+                    left: `${15 + Math.random() * 70}%`,
+                    top: `${20 + Math.random() * 60}%`,
+                  }}
+                  animate={{
+                    y: [0, -35, 0],
+                    opacity: [0, 0.7, 0],
+                    scale: [0.8, 1.3, 0.8],
+                  }}
+                  transition={{
+                    duration: 3.5 + Math.random() * 2,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: i * 0.4,
+                  }}
+                />
+              ))}
+            </div>
 
             <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 relative z-10">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-5 text-center md:text-left">
-                <div className="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400 group-hover:scale-105 transition-transform duration-300">
+                <div className="p-4 bg-amber-500/10 rounded-2xl border border-amber-500/20 text-amber-400 group-hover:scale-105 group-hover:bg-amber-500/20 transition-all duration-300">
                   <Trophy size={32} />
                 </div>
                 <div>
@@ -84,11 +110,12 @@ export default function Achievements() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className="glass-card p-6 flex flex-col justify-between group"
+                className="glass-card p-6 flex flex-col justify-between group cursor-pointer"
+                data-cursor="OPEN"
               >
                 <div>
                   <div className="flex items-center gap-3.5 mb-4">
-                    <div className="p-2.5 bg-accent/10 rounded-xl border border-accent/10 text-accent-light">
+                    <div className="p-2.5 bg-accent/10 rounded-xl border border-accent/10 text-accent-light group-hover:scale-105 transition-transform">
                       <Medal size={20} />
                     </div>
                     <div>

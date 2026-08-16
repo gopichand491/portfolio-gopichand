@@ -319,3 +319,221 @@
   .no-print { display: none !important; }
   body { background: white; color: black; }
 }
+
+/* ─── Premium Interaction & Micro-Animations Upgrade ─── */
+
+/* Desktop Custom Cursor */
+.custom-cursor-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.custom-cursor-core {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #818cf8;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+  box-shadow: 0 0 10px #818cf8;
+}
+
+.custom-cursor-ring {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, border-color 0.2s, background-color 0.2s;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-cursor-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.1em;
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity 0.15s, scale 0.15s;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* Expanded state on interactive elements */
+.custom-cursor-ring.expanded {
+  width: 60px;
+  height: 60px;
+  border-color: rgba(6, 182, 212, 0.6);
+  background-color: rgba(6, 182, 212, 0.08);
+}
+
+.custom-cursor-ring.expanded .custom-cursor-label {
+  opacity: 1;
+  scale: 1;
+}
+
+.custom-cursor-core.expanded {
+  background-color: #22d3ee;
+  box-shadow: 0 0 15px #22d3ee;
+}
+
+/* 3D Perspective Card Layouts */
+.perspective-container {
+  perspective: 1000px;
+}
+
+.perspective-card {
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease-out, border-color 0.3s, box-shadow 0.3s;
+}
+
+.perspective-card-inner {
+  transform: translateZ(20px);
+  transform-style: preserve-3d;
+}
+
+/* Cursor-following interactive spotlight glow */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-glow {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+.spotlight-glow-cyan {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+/* SVG Laser Scan Effect */
+.laser-scan-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.laser-scan-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.laser-scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #6366f1, #22d3ee, #6366f1, transparent);
+  box-shadow: 0 0 12px #22d3ee, 0 0 4px #6366f1;
+  animation: scanSweep 4s linear infinite;
+  opacity: 0;
+}
+
+.laser-scan-container:hover .laser-scan-line {
+  opacity: 1;
+}
+
+@keyframes scanSweep {
+  0% { top: -5%; }
+  100% { top: 105%; }
+}
+
+/* Volumetric dynamic atmospheric lighting */
+.volumetric-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  mix-blend-mode: screen;
+  transition: opacity 1.5s ease-in-out, background 1.5s ease-in-out;
+}
+
+/* Section specific atmospheric colors */
+.atmosphere-hero {
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
+}
+.atmosphere-projects {
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+}
+.atmosphere-lab {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+}
+.atmosphere-achievements {
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+}
+
+/* Data Stream Packet Animation (Architecture Flowcharts) */
+.data-packet {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: #22d3ee;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #22d3ee;
+  pointer-events: none;
+}
+
+/* View toggle switch styling */
+.toggle-switch-container {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.toggle-switch-btn {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.toggle-switch-btn.active {
+  background-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+
+.toggle-switch-btn.inactive {
+  color: #64748b;
+}
+
+.toggle-switch-btn.inactive:hover {
+  color: #e2e8f0;
+}
+
