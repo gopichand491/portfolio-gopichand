@@ -86,7 +86,7 @@ export default function PipelineVisual({ steps, compact = false }: Props) {
             initial={{ opacity: 0, height: 0, y: -5 }}
             animate={{ opacity: 1, height: 'auto', y: 0 }}
             exit={{ opacity: 0, height: 0, y: -5 }}
-            className="p-3 bg-dark-800/90 border border-accent/20 rounded-lg text-xs text-slate-300 shadow-md shadow-black/45 max-w-xl"
+            className="p-3 bg-dark-800/50 border border-accent/20 rounded-lg text-xs text-slate-300 shadow-md shadow-black/45 max-w-xl"
           >
             <div className="font-semibold text-white mb-1 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-accent-light rounded-full" />

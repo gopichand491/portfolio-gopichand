@@ -46,10 +46,10 @@ export default function ParticleNetwork() {
     let height = (canvas.height = window.innerHeight);
     const hasTouch = window.matchMedia('(pointer: coarse)').matches;
 
-    // Particle nodes count (fewer on mobile for speed)
+    // Particle nodes count (much fewer for data-node look)
     const particleCount = hasTouch 
-      ? Math.min(20, Math.floor((width * height) / 60000))
-      : Math.min(50, Math.floor((width * height) / 32000));
+      ? Math.min(15, Math.floor((width * height) / 80000))
+      : Math.min(35, Math.floor((width * height) / 45000));
 
     const particles: Array<{
       x: number;
@@ -65,11 +65,11 @@ export default function ParticleNetwork() {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * (hasTouch ? 0.15 : 0.25),
-        vy: (Math.random() - 0.5) * (hasTouch ? 0.15 : 0.25),
-        radius: Math.random() * 1.5 + 0.5,
+        vx: (Math.random() - 0.5) * (hasTouch ? 0.05 : 0.1), // Much slower movement
+        vy: (Math.random() - 0.5) * (hasTouch ? 0.05 : 0.1),
+        radius: Math.random() * 1.0 + 0.5,
         pulsePhase: Math.random() * Math.PI,
-        pulseSpeed: 0.015 + Math.random() * 0.02,
+        pulseSpeed: 0.01 + Math.random() * 0.015,
       });
     }
 
@@ -132,7 +132,7 @@ export default function ParticleNetwork() {
       ctx.clearRect(0, 0, width, height);
 
       // Draw connections
-      ctx.lineWidth = 0.5;
+      ctx.lineWidth = 0.8;
       for (let i = 0; i < particles.length; i++) {
         const p1 = particles[i];
         for (let j = i + 1; j < particles.length; j++) {
@@ -141,8 +141,9 @@ export default function ParticleNetwork() {
           const dy = p1.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 120) {
-            const alpha = (1 - dist / 120) * 0.06;
+          if (dist < 150) {
+            // Intentional data connection styling
+            const alpha = (1 - dist / 150) * 0.08;
             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -157,8 +158,8 @@ export default function ParticleNetwork() {
           const mdy = p1.y - mouseRef.current.y;
           const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
 
-          if (mdist < 140) {
-            const malpha = (1 - mdist / 140) * 0.09;
+          if (mdist < 180) {
+            const malpha = (1 - mdist / 180) * 0.15;
             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${malpha})`;
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
@@ -209,8 +210,8 @@ export default function ParticleNetwork() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.8 }}
+      className="fixed inset-0 pointer-events-none z-[1]"
+      style={{ opacity: 0.6 }}
       aria-hidden="true"
     />
   );

@@ -93,7 +93,7 @@ export default function Navbar({ viewMode, setViewMode }: NavbarProps) {
         transition={{ duration: 0.5, ease: 'easeOut' }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 no-print ${
           scrolled
-            ? 'bg-dark-900/85 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/30 py-2'
+            ? 'bg-dark-900/60 backdrop-blur-xl border-b border-white/5 shadow-lg shadow-black/30 py-2'
             : 'bg-transparent py-4'
         }`}
       >

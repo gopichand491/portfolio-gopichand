@@ -194,7 +194,7 @@ export default function Skills({ viewMode }: SkillsProps) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.4 }}
-            className="hidden lg:block glass-card p-6 border border-white/5 relative overflow-hidden bg-dark-950/60"
+            className="hidden lg:block glass-card p-6 border border-white/5 relative overflow-hidden bg-dark-950/20"
           >
             {/* Background grid markings for telemetry research look */}
             <div className="absolute inset-0 bg-grid-bg opacity-10 pointer-events-none" />

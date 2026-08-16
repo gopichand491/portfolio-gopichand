@@ -76,7 +76,7 @@ export default function Certificates() {
               >
                 <div>
                   {/* Thumbnail Wrapper with Laser Scan sweep */}
-                  <div className="relative w-full h-36 mb-4.5 rounded-lg overflow-hidden bg-dark-700 border border-white/5 select-none laser-scan-container">
+                  <div className="relative w-full h-36 mb-4.5 rounded-lg overflow-hidden bg-dark-700/30 border border-white/5 select-none laser-scan-container">
                     
                     {/* Laser scanner animation overlays */}
                     <div className="laser-scan-overlay">

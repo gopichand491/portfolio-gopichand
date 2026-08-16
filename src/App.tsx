@@ -14,6 +14,7 @@ import Contact from './components/Contact';
 import Footer from './components/Footer';
 import NotFound from './components/NotFound';
 import ParticleNetwork from './components/ParticleNetwork';
+import BackgroundVideo from './components/BackgroundVideo';
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
@@ -112,6 +113,9 @@ export default function App() {
       {!loaded && <LoadingScreen onComplete={handleLoadComplete} />}
 
       <div className={loaded ? 'relative z-10' : 'opacity-0 pointer-events-none'}>
+        {/* Cinematic Pre-rendered Background Video Layer */}
+        <BackgroundVideo />
+        
         {/* Animated dynamic particle network canvas background */}
         <ParticleNetwork />
 

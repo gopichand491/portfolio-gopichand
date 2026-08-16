@@ -137,7 +137,7 @@ export default function EngineeringLab() {
           </div>
 
           {/* Interactive Flowchart Diagram */}
-          <div className="bg-dark-950/80 p-6 rounded-2xl border border-white/5 relative z-10">
+          <div className="bg-dark-950/30 p-6 rounded-2xl border border-white/5 relative z-10">
             <div className="flex flex-wrap items-center justify-between gap-y-6 md:flex-row">
               {ARCHITECTURES[activeArch].nodes.map((node, i) => {
                 const isSelected = selectedNode?.label === node.label;
@@ -259,7 +259,7 @@ export default function EngineeringLab() {
 
                 {/* Conceptual Chart for genuine data visualization */}
                 {exp.chartData && (
-                  <div className="h-44 w-full bg-dark-900/40 p-2.5 rounded-xl border border-white/5 mb-4 relative z-10">
+                  <div className="h-44 w-full bg-dark-900/20 p-2.5 rounded-xl border border-white/5 mb-4 relative z-10">
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest block mb-2 flex items-center gap-1 font-mono">
                       <BarChart3 size={10} />
                       Relative Architecture Capabilities (Conceptual Scale)

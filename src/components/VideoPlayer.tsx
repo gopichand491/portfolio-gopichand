@@ -38,7 +38,7 @@ export default function VideoPlayer({ src }: { src: string }) {
   };
 
   return (
-    <div className="relative rounded-xl overflow-hidden border border-white/10 bg-black/60 shadow-2xl group transition-all duration-300 hover:border-accent/20">
+    <div className="relative rounded-xl overflow-hidden border border-white/10 bg-black/30 shadow-2xl group transition-all duration-300 hover:border-accent/20">
       <video
         ref={videoRef}
         src={src}

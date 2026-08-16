@@ -22,7 +22,7 @@ function XIcon({ size = 18 }: { size?: number }) {
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/5 bg-dark-900/60 no-print">
+    <footer className="relative border-t border-white/5 bg-dark-900/30 no-print">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           
